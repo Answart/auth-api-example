@@ -4,26 +4,72 @@ var jwt = require('express-jwt');
 var rsaValidation = require('auth0-api-jwt-rsa-validation');
 
 
-
-// A middleware function to validate the access token when the API is called.
+// A middleware f() to validate the access token when the API is called.
 // Audience field is the Auth0 identifier for the API.
 var jwtCheck = jwt({
   secret: rsaValidation(),
   algorithms: ['RS256'],
-  issuer: "https://answart.auth0.com/",
-  audience: 'https://themovieanalyst.com'
+  issuer: "https://YOUR-AUTH0-DOMAIN.auth0.com/",
+  audience: 'YOUR-API-IDENTIFIER'
 });
+// app.use(jwtCheck);
 
-// Allow jwtCheck middleware to be accessed in all routes.
-app.use(jwtCheck);
+
+// Middleware f() that checks decoded JWT to see if token grants permission to view request.
+var guard = function(req, res, next){
+  switch(req.path){
+    case '/movies' :
+    case '/reviewers' :
+    case '/publications' :
+      var permissions = ['general'];
+      console.log('GUARD general req.user:', req.user);
+      for(var i = 0; i < permissions.length; i++){
+        if(req.user.scope.includes(permissions[i])){
+          next();
+        } else {
+          res.send(403, {message: 'Forbidden' });
+        }
+      }
+      break;
+    // Make sure the token has the scope of admin before returning the pending results.
+    case '/pending':
+      var permissions = ['admin'];
+      console.log('GUARD admin req.user:', req.user);
+      for(var i = 0; i < permissions.length; i++){
+        if(req.user.scope.includes(permissions[i])){
+          next();
+        } else {
+          res.send(403, {message: 'Forbidden' });
+        }
+      }
+      break;
+    }
+  }
+};
+// app.use(guard);
+
 
 // Messaged received when not given correct credentials.
-app.use(function (err, req, res, next) {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).json({ message:'Missing or invalid token' });
+app.use((err, req, res, next) => {
+  switch(err.name) {
+    case 'BadRequestError':
+      res.status(400).json({ name: err.name, message: err.message });
+      break;
+    case 'UnauthorizedError':
+      res.status(401).json(err);
+      break;
+    case 'ForbiddenError':
+      res.status(403).json({ name: err.name, message: err.message });
+      break;
+    case 'RouteNotFoundError':
+      res.status(404).json({ name: err.name, message: err.message });
+      break;
+    default:
+      res.status(400).json({ name: err.name, message: err.message });
   }
 });
 
+app.use('/pending', jwtCheck, guard);
 
 
 // Movies API endpoint
@@ -38,7 +84,7 @@ app.get('/movies', function(req, res){
     {title : 'Guardians of the Galaxy', release : '2014', score: 10, reviewer: 'Anthony Miller', publication : 'ComicBookHero.com'},
   ]
 
-  res.json(movies);
+  res.status(200).json(movies);
 })
 
 // Reviewers API endpoint
@@ -53,7 +99,7 @@ app.get('/reviewers', function(req, res){
     {name: 'Anthony Miller', publication : 'ComicBookHero.com', avatar : 'https://s3.amazonaws.com/uifaces/faces/twitter/9lessons/128.jpg'}
   ];
 
-  res.json(authors);
+  res.status(200).json(authors);
 })
 
 // Publications API endpoint
@@ -68,10 +114,10 @@ app.get('/publications', function(req, res){
     {name : 'ComicBookHero.com', avatar : 'glyphicon-flash'}
   ];
 
-  res.json(publications);
+  res.status(200).json(publications);
 })
 
-// Pending reviews API endpoint
+// Pending reviews API endpoint (secured tbc)
 app.get('/pending', function(req, res){
   var pending = [
     {title : 'Superman: Homecoming', release: '2017', score: 10, reviewer: 'Chris Harris', publication: 'International Movie Critic'},
@@ -79,8 +125,9 @@ app.get('/pending', function(req, res){
     {title : 'Doctor Strange', release : '2016', score: 7, reviewer: 'Anthony Miller', publication : 'ComicBookHero.com'}
   ]
 
-  res.json(pending);
+  res.status(200).json(pending);
 })
+
 
 // Launch API Server and be accessed on port 8080.
 app.listen(8080);
