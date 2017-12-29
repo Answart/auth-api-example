@@ -27,7 +27,7 @@ var guard = function(req, res, next){
         if(req.user.scope.includes(permissions[i])){
           next();
         } else {
-          res.send(403, {message: 'Forbidden' });
+          res.status(403).send({ message: 'Forbidden' });
         }
       }
       break;
@@ -39,7 +39,7 @@ var guard = function(req, res, next){
         if(req.user.scope.includes(permissions[i])){
           next();
         } else {
-          res.send(403, {message: 'Forbidden' });
+          res.status(403).send({ message: 'Forbidden' });
         }
       }
       break;
