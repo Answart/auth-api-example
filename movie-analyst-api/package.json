@@ -1,0 +1,19 @@
+{
+  "name": "movie-analyst-api",
+  "version": "1.0.0",
+  "description": "An API that allows one to grab data on movies, reviewers, publications, and pending reviews upoon request.",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Answart/modern-backend-api.git"
+  },
+  "author": "Alexandra Swart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Answart/modern-backend-api/issues"
+  },
+  "homepage": "https://github.com/Answart/modern-backend-api#readme"
+}
