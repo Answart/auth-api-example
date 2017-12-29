@@ -1,2 +1,16 @@
 <div class="container">
+  <div class="jumbotron text-center">
+    <h1><span class="glyphicon glyphicon-user"></span></h1>
+    <h2>Our Movie Critics</h2>
+  </div>
+
+  <div class="row">
+    <% authors.forEach(function(author, index) { %>
+      <div class="col-sm-4">
+        <div class="panel">
+          <%= author.name %>
+        </div>
+      </div>
+      <% }) %>
+  </div>
 </div>
