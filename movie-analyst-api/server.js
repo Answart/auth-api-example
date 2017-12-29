@@ -4,6 +4,28 @@ var jwt = require('express-jwt');
 var rsaValidation = require('auth0-api-jwt-rsa-validation');
 
 
+
+// A middleware function to validate the access token when the API is called.
+// Audience field is the Auth0 identifier for the API.
+var jwtCheck = jwt({
+  secret: rsaValidation(),
+  algorithms: ['RS256'],
+  issuer: "https://answart.auth0.com/",
+  audience: 'https://themovieanalyst.com'
+});
+
+// Allow jwtCheck middleware to be accessed in all routes.
+app.use(jwtCheck);
+
+// Messaged received when not given correct credentials.
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({ message:'Missing or invalid token' });
+  }
+});
+
+
+
 // Movies API endpoint
 app.get('/movies', function(req, res){
   var movies = [
