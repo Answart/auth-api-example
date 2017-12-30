@@ -1,7 +1,7 @@
 var express = require('express');
-var app = express();
 var jwt = require('express-jwt');
 var rsaValidation = require('auth0-api-jwt-rsa-validation');
+var app = express();
 
 
 // A middleware f() to validate the access token when the API is called.
@@ -19,10 +19,9 @@ var jwtCheck = jwt({
 var guard = function(req, res, next){
   switch(req.path){
     case '/movies' :
-    case '/reviewers' :
+    case '/authors' :
     case '/publications' :
       var permissions = ['general'];
-      console.log('GUARD general req.user:', req.user);
       for(var i = 0; i < permissions.length; i++){
         if(req.user.scope.includes(permissions[i])){
           next();
@@ -34,7 +33,6 @@ var guard = function(req, res, next){
     // Make sure the token has the scope of admin before returning the pending results.
     case '/pending':
       var permissions = ['admin'];
-      console.log('GUARD admin req.user:', req.user);
       for(var i = 0; i < permissions.length; i++){
         if(req.user.scope.includes(permissions[i])){
           next();
@@ -44,7 +42,6 @@ var guard = function(req, res, next){
       }
       break;
     }
-  }
 };
 // app.use(guard);
 
@@ -69,7 +66,7 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.use('/pending', jwtCheck, guard);
+// app.use('/pending', jwtCheck, guard);
 
 
 // Movies API endpoint
@@ -88,7 +85,7 @@ app.get('/movies', function(req, res){
 })
 
 // Reviewers API endpoint
-app.get('/reviewers', function(req, res){
+app.get('/authors', function(req, res){
   var authors = [
     {name : 'Robert Smith', publication : 'The Daily Reviewer', avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/angelcolberg/128.jpg'},
     {name: 'Chris Harris', publication : 'International Movie Critic', avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/bungiwan/128.jpg'},

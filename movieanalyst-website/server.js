@@ -43,43 +43,63 @@ app.get('/', function(req, res){
 
 
 app.get('/movies', getAccessToken, function(req, res){
-  console.log('CALLING /movies:');
-  // request
-  //   .get('http://localhost:8080/authors')
-  //   .set()
-  //   .end(function(err, data) {})
-  var movies = []
-  res.render('movies', { movies: movies } );
+  request
+    .get('http://localhost:8080/movies')
+    .set('Authorization', 'Bearer ' + req.access_token)
+    .end(function(err, data) {
+      if(err || data.status == 403){
+        res.status(403).send({ message: err || '403 Forbidden' });
+      } else if(movies = data.body) {
+        res.status(200).render('movies', { movies: movies} );
+      } else {
+        res.status(400).send({ message: 'Forbidden' })
+      }
+    })
 })
 
 app.get('/authors', getAccessToken, function(req, res){
-  console.log('CALLING /authors:');
-  // request
-  //   .get('http://localhost:8080/authors')
-  //   .set()
-  //   .end(function(err, data) {})
-  var authors = []
-  res.render('authors', { authors: authors } );
+  request
+    .get('http://localhost:8080/authors')
+    .set('Authorization', 'Bearer ' + req.access_token)
+    .end(function(err, data) {
+      if(err || data.status == 403){
+        res.status(403).send({ message: err || '403 Forbidden' });
+      } else if(authors = data.body) {
+        res.status(200).render('authors', { authors: authors} );
+      } else {
+        res.status(400).send({ message: 'Forbidden' })
+      }
+    })
 })
 
 app.get('/publications', getAccessToken, function(req, res){
-  console.log('CALLING /publications:');
-  // request
-  //   .get('http://localhost:8080/authors')
-  //   .set()
-  //   .end(function(err, data) {})
-  var publications = []
-  res.render('publications', { publications: publications } );
+  request
+    .get('http://localhost:8080/publications')
+    .set('Authorization', 'Bearer ' + req.access_token)
+    .end(function(err, data) {
+      if(err || data.status == 403){
+        res.status(403).send({ message: err || '403 Forbidden' });
+      } else if(publications = data.body) {
+        res.status(200).render('publications', { publications: publications} );
+      } else {
+        res.status(400).send({ message: 'Forbidden' })
+      }
+    })
 })
 
 app.get('/pending', getAccessToken, function(req, res){
-  console.log('CALLING /pending:');
-  // request
-  //   .get('http://localhost:8080/authors')
-  //   .set()
-  //   .end(function(err, data) {})
-  var pending = []
-  res.render('pending', { pending: pending } );
+  request
+    .get('http://localhost:8080/pending')
+    .set('Authorization', 'Bearer ' + req.access_token)
+    .end(function(err, data) {
+      if(err || data.status == 403){
+        res.status(403).send({ message: err || '403 Forbidden' });
+      } else if(pending = data.body) {
+        res.status(200).render('pending', { pending: pending} );
+      } else {
+        res.status(400).send({ message: 'Forbidden' })
+      }
+    })
 })
 
 
