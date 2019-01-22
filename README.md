@@ -1,4 +1,4 @@
-# express-rest-api
+# auth-api-example
 
 Rudimentary example of 2 clients (representing users w/different permissions) that access an API whose endpoints are protected by Auth0.
 
